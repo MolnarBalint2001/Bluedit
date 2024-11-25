@@ -1,13 +1,13 @@
 import mongoose, {model, Schema} from "mongoose";
-import {IUser} from "./user";
 
 
 interface IFollow extends Document {
+    _id:mongoose.Types.ObjectId
     followerId: mongoose.Types.ObjectId,
     followedId: mongoose.Types.ObjectId,
     createdAt: Date;
     status?: 'pending' | 'accepted' | 'rejected';
-    notificationsEnabled?: boolean;
+    active:boolean,
 }
 
 
@@ -33,6 +33,11 @@ const followSchema = new Schema<IFollow>({
         enum: ['pending', 'accepted', 'rejected'],
         default: 'pending'
     },
+    active:{
+        type:Boolean,
+        default:true
+    }
+
 
 }, {
     timestamps:true

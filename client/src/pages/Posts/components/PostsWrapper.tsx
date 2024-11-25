@@ -1,30 +1,28 @@
 import {PostCard} from "./PostCard.tsx";
 import {Button} from "primereact/button";
-
-const items = [
-    {title: "Post1"},
-    {title: "Post2"},
-    {title: "Post3"},
-    {title: "Post4"},
-    {title: "Post5"},
-    {title: "Post6"},
-    {title: "Post7"},
-    {title: "Post8"},
-    {title: "Post9"},
-    {title: "Post10"}
-]
+import {useNavigate} from "react-router-dom";
+import {routes} from "../../../config/routes.ts";
+import {usePosts} from "../hooks/usePosts.ts";
 
 export const PostsWrapper = () => {
 
+    const navigate = useNavigate();
+
+    const {
+        loading,
+        posts
+    } = usePosts();
 
     return <div className={"flex flex-col items-center gap-4"}>
             <div>
-                <Button icon={"pi pi-pencil"} label={"New post"} size={"small"}/>
+                <Button icon={"pi pi-pencil"} label={"New post"} size={"small"} onClick={()=>{
+                    navigate(routes.newPost);
+                }}/>
             </div>
 
             {
-                items.map((e) => {
-                    return <PostCard key={e.title} data={e}/>
+                posts.map((e) => {
+                    return <PostCard key={e._id} data={e}/>
                 })
             }
         </div>

@@ -7,6 +7,7 @@ import {Provider} from "react-redux";
 import {store} from "./store/store.ts";
 import {ProtectedRoute} from "./components/ProtectedRoute/ProtectedRoute.tsx";
 import {ProgressSpinner} from "primereact/progressspinner";
+import Account from "./pages/Account/Account.tsx";
 
 
 const SignIn = lazy(() => import("./pages/SignIn/SignIn.tsx"));
@@ -14,7 +15,8 @@ const SignUp = lazy(() => import("./pages/SignUp/SignUp.tsx"));
 const Posts = lazy(() => import("./pages/Posts/Posts.tsx"));
 const NotFound = lazy(() => import("./pages/NotFound/NotFound.tsx"));
 const Forbidden = lazy(() => import("./pages/Forbidden/Forbidden.tsx"));
-
+const ManageAccount = lazy(()=>import("./pages/ManageAccount/ManageAccount.tsx"));
+const NewPost = lazy(()=>import("./pages/NewPost/NewPost.tsx"));
 
 function App() {
 
@@ -29,6 +31,9 @@ function App() {
                             <Route element={<ProtectedRoute/>}>
                                 <Route path={"/"} element={<Layout/>}>
                                     <Route path={routes.posts} element={<Posts/>}/>
+                                    <Route path={routes.manageAccount} element={<ManageAccount/>}/>
+                                    <Route path={routes.account + "/:id"} element={<Account/>}/>
+                                    <Route path={routes.newPost} element={<NewPost/>}/>
                                 </Route>
                             </Route>
 

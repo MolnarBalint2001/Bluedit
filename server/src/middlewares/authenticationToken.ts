@@ -1,6 +1,7 @@
 
 import express, {Request, Response, NextFunction} from "express";
 import * as jwt from "jsonwebtoken";
+import {logger} from "../logger";
 
 
 export interface AuthenticatedRequest extends Request {
@@ -10,15 +11,18 @@ export interface AuthenticatedRequest extends Request {
     }
 }
 
-interface JwtPayload {
+export interface JwtPayload {
     userId: string;
     email: string;
 }
 
 
 export const authenticateToken = (req:AuthenticatedRequest, res:Response, next:NextFunction):void | Promise<void> => {
-    const authHeader = req.headers['authorization']
-    const token = authHeader && authHeader.split(' ')[1]
+    logger.debug(req.headers)
+    const token = req.cookies["AUTH_TOKEN"]
+
+    logger.debug("Token: " + token)
+
 
     if (!token){
         res.sendStatus(401);

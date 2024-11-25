@@ -1,6 +1,7 @@
 import {useEffect} from "react";
 import {useCookies} from "react-cookie";
 import {routes} from "../config/routes.ts";
+import {getApi} from "../config/api.ts";
 
 
 export const useAuth = () =>{
@@ -16,6 +17,9 @@ export const useAuth = () =>{
             window.location.href = routes.signin;
         }
 
+        getApi().defaults.headers.common["Authorization"] = "Bearer " + cookie.AUTH_TOKEN;
+
+        console.log(getApi().defaults)
     },[cookie]);
 
 

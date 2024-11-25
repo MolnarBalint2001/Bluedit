@@ -21,7 +21,7 @@ router.post("/signin", async (req:Request, res:Response)=>{
         logger.debug(JSON.stringify(userData));
         res.cookie("AUTH_TOKEN", token, {
             httpOnly:false,
-            maxAge: 60 * 60 * 60,
+            maxAge: 60 * 60 * 600,
             sameSite:"lax"
         });
         ok(res, userData);
@@ -42,7 +42,7 @@ router.post("/signup", async (req:Request, res:Response)=>{
         const {token, userData} = await authService.signup(data);
         res.cookie("AUTH_TOKEN", token, {
             httpOnly:false,
-            maxAge: 60 * 60 * 60,
+            maxAge: 60 * 60 * 600,
             sameSite:"lax"
         });
         ok(res, userData);

@@ -7,6 +7,8 @@ import {Button} from "primereact/button";
 import {Toast} from "primereact/toast";
 import {Dialog} from "primereact/dialog";
 import {InputText} from "primereact/inputtext";
+import {useNavigate} from "react-router-dom";
+import {routes} from "../../../config/routes.ts";
 
 
 
@@ -19,6 +21,8 @@ export const PostCard = memo(({data}:PostCardProps) =>{
     const [commentVisible, setCommentVisible] = useState<boolean>(false);
 
     const shareToastRef = useRef<Toast>(null);
+
+    const navigate = useNavigate();
 
 
     const share = () =>{
@@ -35,19 +39,15 @@ export const PostCard = memo(({data}:PostCardProps) =>{
     }
 
     return <>
-        <Panel header={data.title} className={"w-[30%]"}>
-            <p className="m-0">
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
-                Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
-                consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.
-                Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-            </p>
+        <Panel header={data.title} className={"w-[40%]"}>
+            <p className="m-0">{data.content}</p>
             <div className={"flex w-full mt-4 justify-between"}>
                 <div className={"flex gap-4"}>
                     <Avatar image={Profile} shape={"circle"}/>
                     <div>
-                        <p className={"font-semibold"}>Jordan Belfort</p>
-                        <p className={"text-sm"}>CEO of Wall Street</p>
+                        <p className={"font-semibold hover:underline cursor-pointer"} onClick={()=>{
+                            navigate(routes.account + "/" + data.creatorUserId._id)
+                        }}>{data.creatorUserId.username}</p>
                     </div>
 
                 </div>

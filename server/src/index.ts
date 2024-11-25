@@ -8,6 +8,7 @@ import dotenv from "dotenv";
 import {connect} from "./db";
 import apiRouter from "./apiRouter";
 import bodyParser from "body-parser";
+import cookieParser from "cookie-parser"
 
 dotenv.config();
 
@@ -21,6 +22,8 @@ app.use(cors({
     origin: "http://localhost:5173",
     credentials:true
 }));
+
+app.use(cookieParser())
 
 app.use(bodyParser.json())
 app.use("/api", apiRouter);

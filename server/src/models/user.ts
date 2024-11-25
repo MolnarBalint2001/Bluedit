@@ -4,16 +4,17 @@ import mongoose, {model, Schema} from "mongoose";
 
 
 
-export interface IUser {
+export interface IUser extends Document{
     _id:string,
     email:string,
     username:string,
     password:string,
     created:Date,
-    active:boolean
+    active:boolean,
+    profilePicture?:string,
 }
 
-const userSchema = new Schema({
+const userSchema = new Schema<IUser>({
 
     email: {
         index: true,
@@ -36,6 +37,11 @@ const userSchema = new Schema({
     },
     active:{
         type:Boolean
+    },
+
+    profilePicture:{
+        type:String,
+        required:false
     }
 
 });

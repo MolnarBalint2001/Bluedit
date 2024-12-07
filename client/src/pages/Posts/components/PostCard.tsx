@@ -1,75 +1,67 @@
-import {Panel} from "primereact/panel";
+import {Panel, PanelHeaderTemplateOptions} from "primereact/panel";
 import {PostType} from "../@types/post.type.ts";
-import {memo, useRef, useState} from "react";
+import {memo} from "react";
 import {Avatar} from "primereact/avatar";
 import Profile from "../../../assets/avatar1.jpg";
 import {Button} from "primereact/button";
-import {Toast} from "primereact/toast";
-import {Dialog} from "primereact/dialog";
-import {InputText} from "primereact/inputtext";
-import {useNavigate} from "react-router-dom";
 import {routes} from "../../../config/routes.ts";
-
-
+import {usePostCard} from "../hooks/usePostCard.ts";
+import "./PostCard.css";
+import {Comments} from "./Comments/Comments.tsx";
 
 type PostCardProps = {
-    data:PostType
+    data: PostType
 }
 
-export const PostCard = memo(({data}:PostCardProps) =>{
+export const PostCard = memo(({data}: PostCardProps) =>{
+    const {
+        like,
+        navigate,
+        post
+    } = usePostCard(data);
 
-    const [commentVisible, setCommentVisible] = useState<boolean>(false);
-
-    const shareToastRef = useRef<Toast>(null);
-
-    const navigate = useNavigate();
 
 
-    const share = () =>{
-        shareToastRef.current?.show({ severity: 'success', summary: 'Post', detail: 'You successfully shared this post!' });
+    const headerTemplate = (options:PanelHeaderTemplateOptions) =>{
+        return <div className={options.className}>
+            <p className={"hover:underline font-semibold text-xl cursor-pointer"} onClick={()=>{
+                window.open(routes.post + `/${post._id}`, "_blank");
+            }}>{post.title}</p>
+        </div>
     }
 
-    const like = () =>{
-
-
-    }
-
-    const comment = () =>{
-        setCommentVisible(true);
-    }
 
     return <>
-        <Panel header={data.title} className={"w-[40%]"}>
-            <p className="m-0">{data.content}</p>
+        <Panel headerTemplate={headerTemplate} className={"w-full post-card hover:brightness-125 cursor-pointer"}>
+            <p className="m-0">{post.content.slice(0,400)}...</p>
             <div className={"flex w-full mt-4 justify-between"}>
                 <div className={"flex gap-4"}>
-                    <Avatar image={Profile} shape={"circle"}/>
+                    {
+                        post.creatorUserId.profilePicture ?  <Avatar image={Profile} shape={"circle"}/> : <Avatar shape={"circle"} label={post.creatorUserId.username.slice(0,2).toUpperCase()}/>
+                    }
+
                     <div>
-                        <p className={"font-semibold hover:underline cursor-pointer"} onClick={()=>{
-                            navigate(routes.account + "/" + data.creatorUserId._id)
-                        }}>{data.creatorUserId.username}</p>
+                        <p className={"font-semibold hover:underline cursor-pointer"} onClick={() => {
+                            navigate(routes.accounts + "/" + post.creatorUserId._id)
+                        }}>{post.creatorUserId.username}</p>
+                        <p className={"text-secondaryText"}>{post.creatorUserId.email}</p>
                     </div>
 
                 </div>
 
                 <div className={"flex items-center gap-2"}>
-                    <Button icon={"pi pi-comment"}  size={"small"} text severity={"secondary"} tooltip={"Comment"} tooltipOptions={{position:"bottom"}} label={"100"} onClick={comment}/>
-                    <Button icon="pi pi-heart" size={"small"} text severity={"help"} tooltip={"Like"} tooltipOptions={{position:"bottom"}} label={"9k"} />
-                    <Button icon="pi pi-share-alt" size={"small"} text severity={"info"} tooltip={"Share"} tooltipOptions={{position:"bottom"}} label={"4k"} onClick={share}/>
+                    <Comments postId={post._id} postTitle={post.title} commentCount={post.commentCount} />
+
+                    <Button icon="pi pi-heart" size={"small"} text severity={"help"} tooltip={"Like"}
+                            tooltipOptions={{position: "bottom"}} label={`${post.likes}`} onClick={like}/>
+
+                    <Button icon="pi pi-star" size={"small"} text severity={"warning"} tooltip={"Superlike"}
+                            tooltipOptions={{position: "bottom"}} label={`${post.superlikes}`}/>
                 </div>
 
             </div>
 
         </Panel>
-        <Toast ref={shareToastRef}/>
-        <Dialog header={data.title + " comments"} visible={commentVisible} style={{ width: '30vw' }} onHide={() => {setCommentVisible(false)}}>
-
-            <div className={"flex items-center gap-2 w-full mt-2"}>
-                <InputText placeholder={"Write your thoughts..."} className={"w-full"}/>
-                <Button icon={"pi pi-send"} size={"small"}/>
-            </div>
-
-        </Dialog>
     </>
 
 

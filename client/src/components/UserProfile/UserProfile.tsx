@@ -5,6 +5,7 @@ import {Button} from "primereact/button";
 import {useCookies} from "react-cookie";
 import {useNavigate} from "react-router-dom";
 import {routes} from "../../config/routes.ts";
+import {AccountAvatar} from "../AccountAvatar/AccountAvatar.tsx";
 
 
 type UserProfileProps = {
@@ -29,7 +30,7 @@ export const UserProfile = forwardRef<OverlayPanel, UserProfileProps>((props, re
     return <OverlayPanel ref={ref} style={{height:"auto", width:300}} className={"flex flex-col"}>
         <div className={"font-semibold"}>Account information</div>
         <div className={"flex flex-col items-center gap-4 mt-5 h-full"}>
-            <img src={"https://megaport.hu/media/king-include/uploads/2023/10/906363-female-avatar-profile-picture-013.jpg"} className={"rounded-full"} width={100} height={100}/>
+            <AccountAvatar username={user?.username || ""} size={"xlarge"}/>
             <div className={"flex-col flex items-center"}>
                 <div className={"font-semibold"}>{user?.username}</div>
                 <div>{user?.email}</div>

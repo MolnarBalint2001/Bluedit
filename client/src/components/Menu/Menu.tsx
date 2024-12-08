@@ -1,53 +1,83 @@
 import {memo} from "react";
-import {Sidebar} from "primereact/sidebar";
 import {useAppDispatch, useAppSelector} from "../../store/hooks.ts";
-import {toggleMenu} from "../../store/menu/menu.slice.ts";
 import {routes} from "../../config/routes.ts";
-import {Button} from "primereact/button";
 import {useNavigate} from "react-router-dom";
+import {SpeedDial} from "primereact/speeddial";
+import {Tooltip} from "primereact/tooltip";
+
+
 
 
 
 const nodes = [
-        {
-                key:1,
-                displayName:"Posts",
-                route: routes.posts
-        },
-        {
-                key:2,
-                displayName:"Manage account",
-                route: routes.manageAccount,
-        }
+    {
+        key: 1,
+        displayName: "Posts",
+        route: routes.posts
+    },
+    {
+        key: 2,
+        displayName: "Manage account",
+        route: routes.manageAccount,
+    }
 ]
 
-export const Menu = memo(() =>{
+export const Menu = memo(() => {
 
+    const navigate = useNavigate();
 
-        const navigate = useNavigate();
+    const items = [
+        {
+            label: 'Version information',
+            icon: 'pi pi-info',
+            command: () => {
+               navigate(routes.versionInformation);
+            }
+        },
+        {
+            label: 'Accounts',
+            icon: 'pi pi-users',
+            command: () => {
+                navigate(routes.accounts);
+            }
+        },
 
-        const dispatch = useAppDispatch();
-        const opened = useAppSelector(state=>state.menu.opened);
+        {
+            label: 'Manage account',
+            icon: 'pi pi-user',
+            command: () => {
+                navigate(routes.manageAccount)
+            }
+        },
+        {
+            label: 'Create new post',
+            icon: 'pi pi-plus',
+            command: () => {
+                navigate(routes.newPost);
+            }
+        },
+        {
+            label: 'Posts',
+            icon: 'pi pi-book',
+            command: () => {
+                navigate(routes.posts)
+            }
+        },
 
-        return <Sidebar visible={opened} onHide={()=>dispatch(toggleMenu())} position={"left"}>
-                <div className={"flex flex-col items-start w-full h-[95%] py-2 gap-2"}>
-                        {
-                                nodes.map((e)=>{
-                                        return <Button
-                                            key={e.key}
-                                            text={true}
-                                            label={e.displayName}
-                                            severity={"secondary"}
-                                            onClick={()=>navigate(e.route)}
-                                        />
-                                })
-                        }
+    ];
 
+    const dispatch = useAppDispatch();
+    const opened = useAppSelector(state => state.menu.opened);
 
-                </div>
-                <div className={""}>
-                        Bluedit - Version 1.0.0
-                </div>
-        </Sidebar>
-
+    return <>
+        <SpeedDial
+            id={"speed-dial-menu"}
+            className={"fixed m-4"}
+            model={items}
+            direction="right"
+            style={{left: '0', top: "50%"}}
+            type="semi-circle"
+        />
+        <Tooltip target="#speed-dial-menu .p-speeddial-action"/>
+    </>
 });

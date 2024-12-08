@@ -1,0 +1,8 @@
+
+
+
+.mood-title {
+    background: -webkit-linear-gradient(45deg,  #3781da, rgba(172, 97, 222, 0.9));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}

@@ -32,6 +32,18 @@ export const useAccount = () =>{
     }, [id]);
 
 
+    const followAccount = useCallback(async ()=>{
+        try{
+            const response = await getApi().post("/follow")
+        }
+        catch (e){
+
+        }
+        finally {
+
+        }
+    },[]);
+
     useEffect(()=>{
         getAccountInfo();
     },[id]);

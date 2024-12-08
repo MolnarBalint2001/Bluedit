@@ -6,7 +6,7 @@ type MenuState = {
 }
 
 const initialState: MenuState = {
-    opened:true
+    opened:false
 }
 
 export const menuSlice = createSlice({

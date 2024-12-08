@@ -8,6 +8,7 @@ import {routes} from "../../../config/routes.ts";
 import {usePostCard} from "../hooks/usePostCard.ts";
 import "./PostCard.css";
 import {Comments} from "./Comments/Comments.tsx";
+import {AccountAvatar} from "../../../components/AccountAvatar/AccountAvatar.tsx";
 
 type PostCardProps = {
     data: PostType
@@ -20,7 +21,7 @@ export const PostCard = memo(({data}: PostCardProps) =>{
         post
     } = usePostCard(data);
 
-
+    console.log(post.creatorUserId.profileColor)
 
     const headerTemplate = (options:PanelHeaderTemplateOptions) =>{
         return <div className={options.className}>
@@ -36,9 +37,7 @@ export const PostCard = memo(({data}: PostCardProps) =>{
             <p className="m-0">{post.content.slice(0,400)}...</p>
             <div className={"flex w-full mt-4 justify-between"}>
                 <div className={"flex gap-4"}>
-                    {
-                        post.creatorUserId.profilePicture ?  <Avatar image={Profile} shape={"circle"}/> : <Avatar shape={"circle"} label={post.creatorUserId.username.slice(0,2).toUpperCase()}/>
-                    }
+                    <AccountAvatar color={post.creatorUserId.profileColor} username={post.creatorUserId.username} size={"normal"}/>
 
                     <div>
                         <p className={"font-semibold hover:underline cursor-pointer"} onClick={() => {

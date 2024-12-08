@@ -12,6 +12,12 @@ export default {
   ],
   theme: {
     extend: {},
+    colors:{
+      secondary : "#1f2937",
+      border:"#424b57",
+      hovered:"#191919",
+      secondaryText: "rgba(255, 255, 255, 0.87)"
+    }
   },
   plugins: [],
 }

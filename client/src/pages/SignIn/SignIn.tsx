@@ -11,6 +11,7 @@ import {Toast} from "primereact/toast";
 import {useAppDispatch} from "../../store/hooks.ts";
 import {setUser} from "../../store/auth/auth.slice.ts";
 import {useCookies} from "react-cookie";
+import {PasswordInput} from "../../components/PasswordInput/PasswordInput.tsx";
 
 const SignIn = () => {
 
@@ -21,7 +22,6 @@ const SignIn = () => {
     const [passwordVisible, setPasswordVisible] = useState<boolean>(false);
 
     const emailRef = useRef<HTMLInputElement>(null);
-    const passwordRef = useRef<HTMLInputElement>(null);
     const toastRef = useRef<Toast>(null);
 
     const dispatch = useAppDispatch();
@@ -88,7 +88,7 @@ const SignIn = () => {
     return <>
         <div className={"w-full h-[100vh] flex items-center justify-center"}>
 
-            <Card className={"w-[95%] sm:w-[70%] md:w-[60%] lg:w-[50%] xl:w-[30%] border-[1px] border-gray-200"}>
+            <Card className={"w-[95%] sm:w-[70%] md:w-[60%] lg:w-[50%] xl:w-[20%] border-[1px] border-border"}>
                 <div className={"flex flex-col gap-6 items-center"}>
 
                     <div
@@ -112,16 +112,10 @@ const SignIn = () => {
                         <span className="p-inputgroup-addon">
                             <i className="pi pi-lock"></i>
                         </span>
-                            <InputText
-                                name={"password"}
-                                placeholder="Password"
-                                type={passwordVisible ? "text" : "password"}
+                            <PasswordInput
                                 value={formik.values.password}
                                 onChange={formik.handleChange}
-                                ref={passwordRef}
-                                required
                                 invalid={isFormFieldValid("password")}/>
-                            <Button icon={"pi pi-eye"} tooltip={"Show password"} severity={"secondary"} onClick={()=>setPasswordVisible(prevState => !prevState)}/>
                         </div>
                         {getFormErrorMessage("password")}
 

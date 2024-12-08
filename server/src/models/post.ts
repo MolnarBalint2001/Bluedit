@@ -12,7 +12,9 @@ interface IPost extends Document {
     content:string,
     createdAt:Date,
     creatorUserId:mongoose.Types.ObjectId,
-    active:boolean
+    active:boolean,
+    likes?:number,
+    superlikes?:number
 }
 
 
@@ -37,10 +39,17 @@ const postSchema = new Schema<IPost>({
         ref: 'User',
         required: true
     },
-
     active:{
         type:Boolean,
         default:true
+    },
+    likes:{
+        type:Number,
+        default:0
+    },
+    superlikes:{
+        type:Number,
+        default:0
     }
 
 

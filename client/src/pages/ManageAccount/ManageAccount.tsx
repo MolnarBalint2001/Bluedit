@@ -1,48 +1,25 @@
 import {useAppSelector} from "../../store/hooks.ts";
 import {Badge} from 'primereact/badge';
-import {InputText} from "primereact/inputtext";
-import {Divider} from "primereact/divider";
-import {FileUpload} from "primereact/fileupload";
-import {getApi} from "../../config/api.ts";
-import {useEffect} from "react";
+import {ManageFollowers} from "./components/ManageFollowers/ManageFollowers.tsx";
+import {ManagePosts} from "./components/ManagePosts/ManagePosts.tsx";
+import {AccountInformation} from "./components/AccountInformation/AccountInformation.tsx";
+import {useManageAccount} from "./hooks/useManageAccount.tsx";
 
 
-const items = [
-    {title: "Post1"},
-    {title: "Post2"},
-    {title: "Post3"},
-    {title: "Post4"},
-    {title: "Post5"},
-    {title: "Post6"},
-    {title: "Post7"},
-    {title: "Post8"},
-    {title: "Post9"},
-    {title: "Post10"}
-]
+const ManageAccount = () => {
 
-const ManageAccount = () =>{
+    const user = useAppSelector(state => state.auth.user);
 
-    const user = useAppSelector(state=>state.auth.user);
+    const {
 
-
-    useEffect(()=>{
-        getFollowers();
-    },[]);
-
-    const getFollowers = async () =>{
-        try{
-            const response = await getApi().get("/follow");
-            console.log(response)
-        }
-        catch (e){
-            console.error(e);
-        }
-    }
+    } = useManageAccount();
 
     return <>
         <div className={"w-full h-full flex flex-col items-center"}>
-            <div className={"flex items-center gap-10 w-[50%]"}>
-                <img src={"https://megaport.hu/media/king-include/uploads/2023/10/906363-female-avatar-profile-picture-013.jpg"} className={"rounded-full"} width={200}/>
+            <div className={"flex items-center gap-10 w-full"}>
+                <img
+                    src={"https://megaport.hu/media/king-include/uploads/2023/10/906363-female-avatar-profile-picture-013.jpg"}
+                    className={"rounded-full"} width={200}/>
                 <div>
                     <div className="text-2xl font-semibold">{user?.username}</div>
                     <div>{user?.email}</div>
@@ -54,47 +31,14 @@ const ManageAccount = () =>{
                 </div>
             </div>
 
-            <div className={"w-[50%] mt-4"}>
-                <div className={"font-semibold text-xl"}>Account information</div>
-                <Divider/>
-                <div className={"flex gap-2"}>
-                    <form className={"w-[50%]"}>
 
-                        <div className="flex flex-col gap-2">
-                            <label htmlFor="username">Username</label>
-                            <InputText id="username" aria-describedby="username-help" defaultValue={user?.username}/>
-                        </div>
-
-                        <div className="flex flex-col gap-2">
-                            <label htmlFor="username">Current password</label>
-                            <InputText id="username" aria-describedby="username-help"/>
-                        </div>
-
-                        <div className="flex flex-col gap-2">
-                            <label htmlFor="username">New password</label>
-                            <InputText id="username" aria-describedby="username-help" />
-                        </div>
-
-                    </form>
-
-                    <div>
-                        <div>Change profile picture</div>
-                        <FileUpload mode="basic" name="demo[]" className={"mt-2"} url="/api/upload" accept="image/*" maxFileSize={1000000} />
-                    </div>
-                </div>
-
-            </div>
-
-            <div className={"w-[50%] mt-4"}>
-                <div className={"font-semibold text-xl"}>Manage followers</div>
-                <Divider/>
-            </div>
-
+            <AccountInformation/>
+            <ManageFollowers/>
+            <ManagePosts/>
         </div>
     </>
 
 }
-
 
 
 export default ManageAccount;

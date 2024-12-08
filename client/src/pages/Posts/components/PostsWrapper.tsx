@@ -3,28 +3,44 @@ import {Button} from "primereact/button";
 import {useNavigate} from "react-router-dom";
 import {routes} from "../../../config/routes.ts";
 import {usePosts} from "../hooks/usePosts.ts";
+import {InputText} from "primereact/inputtext";
+import {PostCardSkeleton} from "./PostCardSkeleton.tsx";
 
 export const PostsWrapper = () => {
 
     const navigate = useNavigate();
 
     const {
-        loading,
-        posts
+        posts,
+        loading
     } = usePosts();
 
-    return <div className={"flex flex-col items-center gap-4"}>
-            <div>
-                <Button icon={"pi pi-pencil"} label={"New post"} size={"small"} onClick={()=>{
-                    navigate(routes.newPost);
-                }}/>
-            </div>
-
-            {
-                posts.map((e) => {
-                    return <PostCard key={e._id} data={e}/>
-                })
-            }
+    return <div className={"flex flex-col items-center py-4"}>
+        <div className={"w-full flex gap-2 mb-4"}>
+            <InputText placeholder={"Enter title to search"} className={"w-[90%]"}/>
+            <Button icon={"pi pi-pencil"} label={"New"} size={"small"} onClick={() => {
+                navigate(routes.newPost);
+            }}/>
         </div>
+
+        {
+            loading ? <div className={"w-full flex flex-col gap-2"}>
+                {Array.from([0,1,2]).map((e)=>{
+                    return <PostCardSkeleton key={e}/>
+                })}
+
+            </div> : <div className={"w-full"}>
+                {
+                    posts.map((e) => {
+                        return <PostCard key={e._id} data={e}/>
+                    })
+                }
+                <div className={"w-full text-2xl"}>Incoming posts soon</div>
+            </div>
+        }
+
+
+
+    </div>
 
 }

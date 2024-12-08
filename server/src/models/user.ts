@@ -12,6 +12,7 @@ export interface IUser extends Document{
     created:Date,
     active:boolean,
     profilePicture?:string,
+    profileColor?:string
 }
 
 const userSchema = new Schema<IUser>({
@@ -42,6 +43,11 @@ const userSchema = new Schema<IUser>({
     profilePicture:{
         type:String,
         required:false
+    },
+
+    profileColor:{
+        type:String,
+        required:false,
     }
 
 });

@@ -1,9 +1,15 @@
 import {useCallback, useRef, useState} from "react";
 import {getApi} from "../../../config/api.ts";
 import {Toast} from "primereact/toast";
+import {useNavigate} from "react-router-dom";
+import {routes} from "../../../config/routes.ts";
 
 
 export const useNewPost = () =>{
+
+
+    //Navigate
+    const navigate = useNavigate();
 
     //State
     const [opInProgress, setOpInProgress] = useState<boolean>(false);
@@ -38,6 +44,7 @@ export const useNewPost = () =>{
         console.log(data);
         try{
             const response = await getApi().post("posts", JSON.stringify(data));
+            if (response.status === 200) navigate(routes.posts)
         }
         catch (e){
 

@@ -8,6 +8,26 @@ import {JwtPayload} from "../middlewares/authenticationToken";
 export const accountService = {
 
 
+
+    findAccounts:async ()=>{
+        logger.debug(`Get accounts in the BLl layer.`);
+        const accounts = await User.find().select(["username", "email", "profilePicture"]);
+
+        return accounts;
+    },
+
+    search:async (query:any) =>{
+        logger.debug(`Search accounts in the BLl layer. query=${query}`);
+        const searchResult = await User.find({
+            $or: [
+                { email: { $regex: query, $options: "i" } },
+                { username: { $regex: query, $options: "i" } }
+            ]
+        });
+
+        return searchResult;
+    },
+
     findUserById: async (id?: string) => {
         logger.debug(`Get account information in the BLL layer. id=${id}`);
 
@@ -58,6 +78,12 @@ export const accountService = {
             throw new Error();
 
         return uploaded.profilePicture;
+    },
+
+
+    topAccounts:async ()=>{
+        const accounts = await User.find().select("username profileColor");
+        return accounts.slice(0,5);
     }
 
 

@@ -13,6 +13,8 @@ const comparePassword = async (password: string, hash: string): Promise<boolean>
     return await bcrypt.compare(password, hash);
 }
 
+
+
 export const authService = {
 
 
@@ -39,7 +41,8 @@ export const authService = {
         const newUser = new User({
             email: data.email,
             username: data.username,
-            password: await hashPassword(data.password)
+            password: await hashPassword(data.password),
+            profileColor:Math.floor(Math.random()*16777215).toString(16)
         });
 
         logger.debug(`NewUser id=${newUser._id}`)

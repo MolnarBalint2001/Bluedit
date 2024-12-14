@@ -9,7 +9,8 @@ export type CommentType = {
         _id:string,
         username:string,
         email:string,
-        profilePicture:string
+        profilePicture:string,
+        profileColor:string
     }
     createdAt:Date
 }

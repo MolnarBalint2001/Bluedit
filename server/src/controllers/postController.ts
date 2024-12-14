@@ -3,6 +3,7 @@ import {badRequest, ok} from "../helpers/responseHelper";
 import {AuthenticatedRequest, authenticateToken} from "../middlewares/authenticationToken";
 import {logger} from "../logger";
 import {postService} from "../services/postService";
+import post from "../models/post";
 
 
 const router = express.Router();
@@ -90,18 +91,77 @@ router.delete("/:id", authenticateToken, async (req,res)=>{
 });
 
 
-router.put("/like", authenticateToken, async (req:AuthenticatedRequest, res)=>{
+router.put("/likes", authenticateToken, async (req:AuthenticatedRequest, res)=>{
    try{
        const postId = req.query.postId;
+       const {user} = req;
        logger.debug(`Like in the API layer. postId=${postId}`);
 
-       const liked = await postService.like(postId);
-       ok(res, liked);
+       const result = await postService.like(postId, user);
+       ok(res, result);
    }
    catch (e){
         badRequest(res, e);
    }
 });
+
+
+router.get("/likes/:postId", authenticateToken, async (req,res)=>{
+   try{
+       const postId = req.params.postId;
+       logger.debug(`Get likes to a post in the API layer. postId=${postId}`)
+       const likes = await postService.findLikes(postId);
+
+       ok(res, likes);
+   }
+   catch (e){
+       badRequest(res, e);
+   }
+});
+
+
+
+router.post("/superlikes", authenticateToken, async (req:AuthenticatedRequest, res)=>{
+    try{
+        const postId:any = req.query.postId;
+        const {user} = req;
+        logger.debug(`Superlike in the API layer. postId=${postId}`);
+
+        const result = await postService.superlike(postId, user);
+        ok(res, result);
+    }
+    catch (e){
+        badRequest(res, e);
+    }
+});
+
+
+router.get("/superlikes/:postId", authenticateToken, async (req:AuthenticatedRequest, res)=>{
+    try{
+        const postId = req.params.postId;
+        logger.debug(`Get superlikes to a post in the API layer. postId=${postId}`)
+        const superlikes = await postService.findSuperlikes(postId);
+
+        ok(res, superlikes);
+    }
+    catch (e){
+        badRequest(res, e);
+    }
+});
+
+
+
+router.get("/account-posts/:accountId", authenticateToken, async (req, res)=>{
+    try{
+        const acocuntId = req.params.accountId;
+        logger.debug(`Get posts by accountId in the API layer. accountId=${acocuntId}`);
+        const posts = await postService.findPostsByAccount(acocuntId);
+        ok(res, posts);
+    }
+    catch (e){
+        badRequest(res, e);
+    }
+})
 
 
 

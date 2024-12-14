@@ -13,7 +13,8 @@ const Accounts = () => {
 
 
     const {
-        data, isLoading, error, refetch
+        data, isLoading, error, refetch,
+        setQuery, filtered
     } = useAccounts();
 
 
@@ -27,12 +28,12 @@ const Accounts = () => {
             <Divider/>
             <IconField iconPosition="left">
                 <InputIcon className="pi pi-search"></InputIcon>
-                <InputText placeholder="Search" className={"w-full"}/>
+                <InputText placeholder="Search" className={"w-full"} onChange={(e)=>setQuery(e.target.value)}/>
             </IconField>
             {isLoading ? <AccountsListSkeleton/> :
                 <div className={"flex flex-col gap-4 mt-4"}>
                     {
-                        data?.map((item: AccountListItemType) => {
+                        filtered?.map((item: AccountListItemType) => {
                             return <AccountListItem key={item._id} data={item}/>
                         })
                     }

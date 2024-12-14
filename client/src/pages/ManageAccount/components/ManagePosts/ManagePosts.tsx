@@ -10,7 +10,6 @@ import {PostCard} from "../PostCard/PostCard.tsx";
 export const ManagePosts = memo(() =>{
 
     const posts = useAppSelector(state=>state.manageAccount.accountData?.posts);
-    console.log(posts)
     const [opened, setOpened] = useState<boolean>(false);
 
     return <div className={"w-full mt-4"}>

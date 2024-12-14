@@ -1,8 +1,10 @@
 import Post from "../models/post";
-import Comment from "../models/comment";
 import {logger} from "../logger";
 import Follow from "../models/follow";
 import mongoose from "mongoose";
+import Likes from "../models/likes";
+import {JwtPayload} from "../middlewares/authenticationToken";
+import Superlikes from "../models/superlikes";
 
 const validatePost = (data: any): boolean => {
 
@@ -36,7 +38,7 @@ export const postService = {
         followedIdList.push(new mongoose.Types.ObjectId(user.userId))
 
 
-        const posts =  await Post.aggregate([
+        const posts = await Post.aggregate([
             {
                 $lookup: {
                     from: "comments",
@@ -47,7 +49,7 @@ export const postService = {
             },
             {
                 $addFields: {
-                    commentCount: { $size: "$comments" },
+                    commentCount: {$size: "$comments"},
                 },
             },
             {
@@ -56,8 +58,8 @@ export const postService = {
                 },
             },
             {
-                $sort:{
-                    "createdAt":-1
+                $sort: {
+                    "createdAt": -1
                 }
             }
         ]);
@@ -98,7 +100,7 @@ export const postService = {
         logger.debug(`Update post in the BLL layer. title=${data.title} contentLength=${data.content?.length}`);
 
         const updatedPost = await Post.findByIdAndUpdate(data._id, {...data}, {
-            new:true,
+            new: true,
             runValidators: true,
         });
 
@@ -110,7 +112,7 @@ export const postService = {
     },
 
 
-    deletePost: async (id:string) => {
+    deletePost: async (id: string) => {
 
         logger.debug(`Delete post in the BLL layer. id=${id}`)
         const deletedPost = await Post.findByIdAndDelete(id);
@@ -120,30 +122,67 @@ export const postService = {
         return deletedPost._id;
     },
 
-    like: async (postId: any) => {
+    like: async (postId: any, user?: JwtPayload) => {
         logger.debug(`Like post in the BLl layer. postId=${postId}`);
 
-        if (!postId)
-            throw new Error("PostId not found!")
 
-        const updatedPost = await Post.findByIdAndUpdate(
-            postId,
-            {$inc: {likes: 1}},
-            {new: true}
-        );
+        const alreadyLiked = await Likes.findOne({postId: postId, userId: user?.userId});
+        if (alreadyLiked) {
+            await Likes.findByIdAndDelete(alreadyLiked._id);
+            if (!alreadyLiked)
+                throw new Error("Like nof found!");
 
-        if (!updatedPost)
-            throw new Error("Post not found!");
+            await postService.handleLikesCount(alreadyLiked.postId, true);
+            return {
+                like: alreadyLiked._id,
+                opDelete: true
+            }
+        }
 
-        return updatedPost;
+
+        logger.debug("Post is not liked yet.");
+
+        const newLike = new Likes({postId: postId, userId: user?.userId});
+        const savedLike = await newLike.save();
+
+
+        await postService.handleLikesCount(savedLike.postId, false);
+
+        return {
+            like: await savedLike.populate("userId", "_id username email profileColor"),
+            opDelete: false
+        }
     },
 
 
-    getStatistics:async () =>{
+    handleLikesCount:async (postId:mongoose.Types.ObjectId, decr:boolean) =>{
+
+        const post = await Post.findById(postId);
+
+        if (!post)
+            throw new Error("Post not found.");
+
+        if (decr){
+            if (post.likes > 0){
+                post.likes -=1;
+                post.save();
+                logger.debug("Post likes count successfully decremented!")
+            }
+            return;
+        }
+
+        post.likes +=1;
+        post.save();
+
+        logger.debug("Post likes count successfully incremented!")
+    },
 
 
-        const startDate = new Date(new Date().getFullYear(),  new Date().getMonth()+1, - 1, 1);
-        const endDate = new Date(new Date().getFullYear(), new Date().getMonth()+1, 1);
+    getStatistics: async () => {
+
+
+        const startDate = new Date(new Date().getFullYear(), new Date().getMonth() + 1, -1, 1);
+        const endDate = new Date(new Date().getFullYear(), new Date().getMonth() + 1, 1);
 
 
         let startOfDay = new Date();
@@ -153,8 +192,7 @@ export const postService = {
         endOfDay.setHours(23, 59, 59, 999);
 
 
-
-        const monthPostCountProm =   Post.find({
+        const monthPostCountProm = Post.find({
             createdAt: {
                 $gte: startDate,
                 $lt: endDate,
@@ -162,7 +200,7 @@ export const postService = {
         }).countDocuments();
 
         const todayPostsCountProm = Post.find({
-            createdAt:{
+            createdAt: {
                 $gte: startOfDay,
                 $lt: endOfDay,
             }
@@ -172,9 +210,93 @@ export const postService = {
 
         logger.debug(`Statistics count: MC=${monthCount}, TC=${todayCount}`);
         return {
-            todayPostsCount:todayCount,
-            monthPostsCount:monthCount
+            todayPostsCount: todayCount,
+            monthPostsCount: monthCount
         }
+    },
+
+
+    findLikes: async (postId: string) => {
+
+        logger.debug(`Get likes to a post in the BLL layer. postId=${postId}`);
+
+        const likes = await Likes
+            .find({postId: postId})
+            .populate("userId", "_id username email profileColor");
+        return likes;
+    },
+
+
+
+    superlike:async (postId:string, user?:JwtPayload)=>{
+        logger.debug(`Superlike post in the BLl layer. postId=${postId}`);
+
+
+        const alreadySuperliked = await Superlikes.findOne({postId: postId, userId: user?.userId});
+        if (alreadySuperliked) {
+            await Superlikes.findByIdAndDelete(alreadySuperliked._id);
+            if (!alreadySuperliked)
+                throw new Error("Like nof found!");
+
+            await postService.handleSuperlikesCount(alreadySuperliked.postId, true);
+            return {
+                like: alreadySuperliked._id,
+                opDelete: true
+            }
+        }
+
+
+        logger.debug("Post is not liked yet.");
+
+        const newSuperlike = new Superlikes({postId: postId, userId: user?.userId});
+        const savedSuperlike = await newSuperlike.save();
+
+
+        await postService.handleSuperlikesCount(savedSuperlike.postId, false);
+
+        return {
+            like: await savedSuperlike.populate("userId", "_id username email profileColor"),
+            opDelete: false
+        }
+    },
+
+
+    findSuperlikes:async (postId:string) =>{
+        const superlikes = await Superlikes.find({postId:postId}).populate("userId", "_id username email profileColor");
+
+        return superlikes;
+    },
+
+
+    handleSuperlikesCount:async (postId:mongoose.Types.ObjectId, decr:boolean) =>{
+
+        const post = await Post.findById(postId);
+
+        if (!post)
+            throw new Error("Post not found.");
+
+        if (decr){
+            if (post.superlikes > 0){
+                post.superlikes -=1;
+                post.save();
+                logger.debug("Post superlikes count successfully decremented!")
+            }
+            return;
+        }
+
+        post.superlikes +=1;
+        post.save();
+
+        logger.debug("Post superlikes count successfully incremented!")
+    },
+
+
+    findPostsByAccount:async (accountId:string)=>{
+        logger.debug(`Get posts by accountId in the BLl layer. accountId=${accountId}`);
+
+        const posts = await Post.find({creatorUserId:accountId});
+
+        return posts;
 
 
     }

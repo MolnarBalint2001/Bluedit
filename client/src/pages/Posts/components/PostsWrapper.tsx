@@ -18,7 +18,7 @@ export const PostsWrapper = () => {
     return <div className={"flex flex-col items-center py-4"}>
         <div className={"w-full flex gap-2 mb-4"}>
             <InputText placeholder={"Enter title to search"} className={"w-[90%]"}/>
-            <Button icon={"pi pi-pencil"} label={"New"} size={"small"} onClick={() => {
+            <Button icon={"pi pi-pencil"} label={"New"} size={"small"} severity={"success"} onClick={() => {
                 navigate(routes.newPost);
             }}/>
         </div>

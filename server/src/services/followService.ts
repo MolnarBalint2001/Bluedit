@@ -15,7 +15,7 @@ export const followService = {
         const followers = await Follow.find({
             followedId:user.userId,
             active:true
-        })
+        }).populate("followerId", "_id username email");
 
         return followers;
 
@@ -25,6 +25,7 @@ export const followService = {
 
         if (!followedId || !user)
             throw new Error("Unauthorized or followedId is null.");
+
 
 
         const follow =  await Follow.findOne({

@@ -13,8 +13,8 @@ interface IPost extends Document {
     createdAt:Date,
     creatorUserId:mongoose.Types.ObjectId,
     active:boolean,
-    likes?:number,
-    superlikes?:number
+    likes:number,
+    superlikes:number
 }
 
 

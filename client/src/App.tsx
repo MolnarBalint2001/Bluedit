@@ -9,6 +9,7 @@ import {ProtectedRoute} from "./components/ProtectedRoute/ProtectedRoute.tsx";
 import {ProgressSpinner} from "primereact/progressspinner";
 import Account from "./pages/Account/Account.tsx";
 import {QueryClient, QueryClientProvider} from "react-query";
+import 'react-toastify/dist/ReactToastify.css';
 
 
 const SignIn = lazy(() => import("./pages/SignIn/SignIn.tsx"));

@@ -11,7 +11,7 @@ export const accountService = {
 
     findAccounts:async ()=>{
         logger.debug(`Get accounts in the BLl layer.`);
-        const accounts = await User.find().select(["username", "email", "profilePicture"]);
+        const accounts = await User.find().select(["username", "email", "profilePicture" , "profileColor"]);
 
         return accounts;
     },
@@ -49,7 +49,7 @@ export const accountService = {
 
         const followers = await Follow.find({
             followedId:id
-        });
+        }).populate("followerId", "_id username email profileColor");
 
 
         const account = {
@@ -57,7 +57,8 @@ export const accountService = {
             username:accountInformation.username,
             email:accountInformation.email,
             posts:posts,
-            followers:followers
+            followers:followers,
+            isFollowed:true
         }
         return account;
     },

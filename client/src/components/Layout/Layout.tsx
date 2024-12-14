@@ -3,6 +3,8 @@ import {Navbar} from "../Navbar/Navbar.tsx";
 import {Menu} from "../Menu/Menu.tsx";
 import {useAuth} from "../../hooks/auth.ts";
 import {ScrollTopButton} from "../ScrollTopBtn/ScrollTopButton.tsx";
+import { ToastContainer } from 'react-toastify';
+
 
 
 const Layout = () => {
@@ -19,7 +21,7 @@ const Layout = () => {
             </div>
         </div>
         <ScrollTopButton/>
-
+        <ToastContainer position={"bottom-right"} autoClose={5000} newestOnTop={true} theme={"dark"}/>
     </>
 }
 

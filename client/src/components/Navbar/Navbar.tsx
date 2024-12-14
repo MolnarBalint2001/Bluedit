@@ -33,7 +33,7 @@ export const Navbar = memo(() => {
 
             <Button visible={user === null} icon="pi pi-sign-in" iconPos={"right"} label={"Sign in"} size={"small"} onClick={()=>navigate(routes.signin)}/>
             <Button visible={user === null} icon="pi pi-user-plus" iconPos={"right"} label={"Sign up"} text={true} size={"small"} onClick={()=>navigate(routes.signup)}/>
-            <Avatar label={user?.username.slice(0,2).toUpperCase()} size="normal" shape="circle" onClick={(e)=>userProfileRef.current?.toggle(e)}/>
+            <Avatar label={user?.username?.slice(0,2).toUpperCase()} size="normal" shape="circle" onClick={(e)=>userProfileRef.current?.toggle(e)}/>
             <UserProfile ref={userProfileRef}/>
         </div>
     </div>

@@ -14,16 +14,6 @@ export const usePostCard = (data:PostType) =>{
     //Navigate
     const navigate = useNavigate();
 
-    // Actions
-    const like = useCallback(async () => {
-        try{
-            const response = await getApi().put(`/posts/like?postId=${post._id}`);
-            setPost(response.data);
-        }
-        catch (e){
-
-        }
-    },[post._id]);
 
     const superlike = useCallback(async () =>{
         try{
@@ -37,11 +27,11 @@ export const usePostCard = (data:PostType) =>{
 
 
     return {
-        like,
         navigate,
         setCommentVisible,
         commentVisible,
-        post
+        post,
+        setPost
     }
 
 

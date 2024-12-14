@@ -29,8 +29,7 @@ router.post("/", authenticateToken, async (req:AuthenticatedRequest, res)=>{
         const {user} = req;
         const followedId = req.query.followedId;
 
-
-        logger.debug("Follow in the api layer.");
+        logger.debug(`Follow in the api layer. userId=${user?.userId}, followedId=${followedId}`);
 
         const follow = await followService.follow(followedId,user);
         ok(res, follow);

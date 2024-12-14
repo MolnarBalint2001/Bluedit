@@ -2,6 +2,8 @@ import {useCallback, useEffect, useState} from "react";
 import {AccountType} from "../@types/account.type.ts";
 import {useParams} from "react-router-dom";
 import {getApi} from "../../../config/api.ts";
+import {toast} from "react-toastify";
+
 
 
 export const useAccount = () =>{
@@ -34,15 +36,17 @@ export const useAccount = () =>{
 
     const followAccount = useCallback(async ()=>{
         try{
-            const response = await getApi().post("/follow")
+            const response = await getApi().post(`/follow?followedId=${account?._id}`);
+
+            toast.success(`You followed ${account?.username}.`);
         }
         catch (e){
-
+            toast.error("Operation failed.");
         }
         finally {
 
         }
-    },[]);
+    },[account]);
 
     useEffect(()=>{
         getAccountInfo();
@@ -50,7 +54,8 @@ export const useAccount = () =>{
 
     return {
         account,
-        loading
+        loading,
+        followAccount
     }
 
 

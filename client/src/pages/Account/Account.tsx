@@ -3,11 +3,14 @@ import {Divider} from "primereact/divider";
 import {useAccount} from "./hooks/useAccount.ts";
 import {AccountSkeleton} from "./AccountSkeleton.tsx";
 import {Button} from "primereact/button";
+import {AccountPosts} from "./AccountPosts.tsx";
+import {AccountAvatar} from "../../components/AccountAvatar/AccountAvatar.tsx";
+import {AccountFollowers} from "./AccountFollowers.tsx";
 
 
 const Account = () =>{
 
-    const {account, loading} = useAccount();
+    const {account, loading, followAccount} = useAccount();
 
     if (loading){
         return <AccountSkeleton/>
@@ -15,16 +18,16 @@ const Account = () =>{
 
     return <>
         <div className={"w-full h-full flex flex-col items-center"}>
-            <div className={"flex items-center gap-10 w-[50%]"}>
-                <img src={"https://megaport.hu/media/king-include/uploads/2023/10/906363-female-avatar-profile-picture-013.jpg"} className={"rounded-full"} width={200}/>
+            <div className={"flex items-start gap-4 w-full"}>
+                <AccountAvatar username={account?.username || ""} size={"xlarge"} color={""}/>
                 <div>
                     <div className="text-2xl font-semibold">{account?.username}</div>
                     <div>{account?.email}</div>
-                    <Button icon={"pi pi-user-plus"} size={"small"} text label={"Follow"}/>
-                    <div className={"flex gap-2 mt-5"}>
-                        <Badge value={`${account?.followers.length} followers`}/>
-                        <Badge value={`${account?.posts.length} shared posts`} severity={"secondary"}/>
-                        <Badge value={`${3000} likes`} severity={"success"}/>
+
+                    <div className={"flex items-center gap-2 mt-5"}>
+                        <AccountFollowers followers={account?.followers || []}/>
+                        <Badge value={`${account?.posts.length} shared posts`} severity={"success"}/>
+                        <Button icon={"pi pi-user-plus"}  size={"small"} text label={"Follow"} rounded onClick={followAccount}/>
                     </div>
                 </div>
 
@@ -32,7 +35,8 @@ const Account = () =>{
             </div>
 
 
-            <Divider className={"w-[50%]"}/>
+            <Divider className={"w-full"}/>
+            <AccountPosts posts={account?.posts || []}/>
         </div>
     </>
 

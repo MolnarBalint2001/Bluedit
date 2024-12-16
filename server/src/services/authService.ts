@@ -66,7 +66,8 @@ export const authService = {
             userData:{
                 id: savedUser._id,
                 username: savedUser.username,
-                email: savedUser.email
+                email: savedUser.email,
+                profileColor:savedUser.profileColor
             }
         }
 
@@ -118,7 +119,8 @@ export const authService = {
             userData: {
                 id: user._id,
                 username: user.username,
-                email: user.email
+                email: user.email,
+                profileColor:user.profileColor
             }
         };
 

@@ -18,10 +18,7 @@ export interface JwtPayload {
 
 
 export const authenticateToken = (req:AuthenticatedRequest, res:Response, next:NextFunction):void | Promise<void> => {
-    logger.debug(req.headers)
     const token = req.cookies["AUTH_TOKEN"]
-
-    logger.debug("Token: " + token)
 
 
     if (!token){

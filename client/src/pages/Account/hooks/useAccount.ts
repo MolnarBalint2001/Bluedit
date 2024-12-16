@@ -3,6 +3,7 @@ import {AccountType} from "../@types/account.type.ts";
 import {useParams} from "react-router-dom";
 import {getApi} from "../../../config/api.ts";
 import {toast} from "react-toastify";
+import {useAppSelector} from "../../../store/hooks.ts";
 
 
 
@@ -11,6 +12,9 @@ export const useAccount = () =>{
     //States
     const [account, setAccount] = useState<AccountType | null>(null);
     const [loading, setLoading] = useState<boolean>(true);
+    const user = useAppSelector(state=>state.auth.user);
+
+
 
 
     //Params
@@ -52,10 +56,13 @@ export const useAccount = () =>{
         getAccountInfo();
     },[id]);
 
+
+
     return {
         account,
         loading,
-        followAccount
+        followAccount,
+        user
     }
 
 

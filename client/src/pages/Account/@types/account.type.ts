@@ -7,5 +7,6 @@ export type AccountType = {
     username:string,
     email:string,
     posts:PostType[],
-    followers:FollowersType[]
+    followers:FollowersType[],
+    profileColor?:string
 }

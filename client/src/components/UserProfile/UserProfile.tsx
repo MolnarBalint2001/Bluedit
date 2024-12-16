@@ -24,13 +24,14 @@ export const UserProfile = forwardRef<OverlayPanel, UserProfileProps>((props, re
     const navigate = useNavigate();
 
     const signout = () =>{
-        removeCookie("AUTH_TOKEN");
+        removeCookie("AUTH_TOKEN",  { path: '/', domain: 'localhost' });
+        localStorage.clear();
     }
 
     return <OverlayPanel ref={ref} style={{height:"auto", width:300}} className={"flex flex-col"}>
         <div className={"font-semibold"}>Account information</div>
         <div className={"flex flex-col items-center gap-4 mt-5 h-full"}>
-            <AccountAvatar username={user?.username || ""} size={"xlarge"}/>
+            <AccountAvatar username={user?.username || ""} size={"xlarge"} color={user?.profileColor}/>
             <div className={"flex-col flex items-center"}>
                 <div className={"font-semibold"}>{user?.username}</div>
                 <div>{user?.email}</div>

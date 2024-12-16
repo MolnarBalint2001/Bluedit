@@ -5,5 +5,6 @@
 export type UserType = {
     id:string,
     email:string,
-    username:string
+    username:string,
+    profileColor?:string
 }

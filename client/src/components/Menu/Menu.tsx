@@ -28,13 +28,6 @@ export const Menu = memo(() => {
 
     const items = [
         {
-            label: 'Version information',
-            icon: 'pi pi-info',
-            command: () => {
-               navigate(routes.versionInformation);
-            }
-        },
-        {
             label: 'Accounts',
             icon: 'pi pi-users',
             command: () => {

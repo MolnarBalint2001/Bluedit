@@ -3,7 +3,6 @@ import {badRequest, ok} from "../helpers/responseHelper";
 import {AuthenticatedRequest, authenticateToken} from "../middlewares/authenticationToken";
 import {logger} from "../logger";
 import {postService} from "../services/postService";
-import post from "../models/post";
 
 
 const router = express.Router();
@@ -164,7 +163,19 @@ router.get("/account-posts/:accountId", authenticateToken, async (req, res)=>{
 })
 
 
+router.post("/search", authenticateToken , async (req:AuthenticatedRequest, res)=>{
+   try{
 
+       const {user} = req;
+       const {query} = req.body;
+       logger.debug(`Post search in the API layer. query=${query}`)
+       const result = await postService.search(query, user);
+       ok(res, result);
+   }
+   catch (e){
+       badRequest(res, e);
+   }
+});
 
 
 

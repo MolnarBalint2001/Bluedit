@@ -299,6 +299,59 @@ export const postService = {
         return posts;
 
 
+    },
+
+
+    search:async (query:string | undefined, user?:JwtPayload)=>{
+        logger.debug(`Post search in the BLL layer. query=${query}`);
+
+
+        if (!query || query.length === 0)
+            return await postService.findActives(user);
+
+        //Case sensitive searching
+        const result  = await Post.aggregate([
+
+            {
+                $match: {
+                    $or: [
+                        { title: { $regex: query, $options: "i" } },
+                        { content: { $regex: query, $options: "i" } }
+                    ]
+                }
+            },
+            {
+                $lookup: {
+                    from: "comments",
+                    localField: "_id",
+                    foreignField: "postId",
+                    as: "comments",
+                },
+            },
+            {
+                $addFields: {
+                    commentCount: {$size: "$comments"},
+                },
+            },
+            {
+                $project: {
+                    comments: 0,
+                },
+            },
+            {
+                $sort: {
+                    "createdAt": -1
+                }
+            }
+        ]);
+
+        const queryPopResult = await Post.populate(result, {
+            path: "creatorUserId",
+            select: "_id username email profilePicture profileColor",
+        });
+
+        return queryPopResult;
+
     }
 
 

@@ -12,12 +12,14 @@ export const PostsWrapper = () => {
 
     const {
         posts,
-        loading
+        loading,
+        queryRef,
+        timeoutSearch
     } = usePosts();
 
     return <div className={"flex flex-col items-center py-4"}>
         <div className={"w-full flex gap-2 mb-4"}>
-            <InputText placeholder={"Enter title to search"} className={"w-[90%]"}/>
+            <InputText ref={queryRef} placeholder={"Search in posts"} className={"w-[90%]"} onChange={timeoutSearch}/>
             <Button icon={"pi pi-pencil"} label={"New"} size={"small"} severity={"success"} onClick={() => {
                 navigate(routes.newPost);
             }}/>

@@ -3,6 +3,7 @@ import {getApi} from "../../../config/api.ts";
 import {Toast} from "primereact/toast";
 import {useNavigate} from "react-router-dom";
 import {routes} from "../../../config/routes.ts";
+import {toast} from "react-toastify";
 
 
 export const useNewPost = () =>{
@@ -44,10 +45,14 @@ export const useNewPost = () =>{
         console.log(data);
         try{
             const response = await getApi().post("posts", JSON.stringify(data));
-            if (response.status === 200) navigate(routes.posts)
+            if (response.status === 200){
+                toast.success("You successfully created a post.")
+                navigate(routes.posts);
+            }
+
         }
         catch (e){
-
+            toast.error("Something went wrong.")
         }
         finally {
             setOpInProgress(false);

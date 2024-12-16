@@ -3,6 +3,8 @@ import User from "../models/user";
 import Post from "../models/post";
 import Follow from "../models/follow";
 import {JwtPayload} from "../middlewares/authenticationToken";
+import {Types} from "mongoose";
+
 
 
 export const accountService = {
@@ -38,7 +40,7 @@ export const accountService = {
         const accountInformation = await User.findOne({
             _id:id
         })
-            .select("_id, username email");
+            .select("_id, username email profileColor");
 
         if (!accountInformation)
             throw new Error("User not found!")
@@ -48,8 +50,11 @@ export const accountService = {
         });
 
         const followers = await Follow.find({
-            followedId:id
+            followedId:id,
+            status:"accepted"
         }).populate("followerId", "_id username email profileColor");
+
+
 
 
         const account = {
@@ -58,33 +63,42 @@ export const accountService = {
             email:accountInformation.email,
             posts:posts,
             followers:followers,
-            isFollowed:true
+            isFollowed:true,
+            profileColor:accountInformation.profileColor
         }
         return account;
-    },
-
-
-    uploadImage:async (data:any, user:JwtPayload | undefined) =>{
-        const fileContent = data.fileContent;
-
-        logger.debug("Upload profile image in the BLL layer.")
-        if (!fileContent ||fileContent.length === 0 )
-            throw new Error("File not found!");
-
-        const uploaded = await User.findByIdAndUpdate(user?.userId, {
-            profilePicture:fileContent
-        });
-
-        if (!uploaded)
-            throw new Error();
-
-        return uploaded.profilePicture;
     },
 
 
     topAccounts:async ()=>{
         const accounts = await User.find().select("username profileColor");
         return accounts.slice(0,5);
+    },
+
+
+    updateAccount:async (accountId:any, data:any)=>{
+        const updatedUser = await User
+            .findByIdAndUpdate(accountId, {...data}, {new:true})
+            .select("_id username email profileColor");
+
+        if (!updatedUser)
+            throw new Error("Update failed");
+
+        return updatedUser;
+    },
+
+
+    getLoggedInUser:async (user?:JwtPayload)=>{
+
+        if (!user)
+            throw new Error("Unathorized.");
+
+        const currentUser = await User.findById(user.userId).select("_id username email profileColor created");
+
+        logger.debug("Logged in user id: " + currentUser?._id)
+        if (!currentUser)
+            throw new Error("User not found.");
+        return currentUser;
     }
 
 

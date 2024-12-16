@@ -3,6 +3,7 @@ import {badRequest, ok} from "../helpers/responseHelper";
 import {logger} from "../logger";
 import  authenticateToken, {AuthenticatedRequest} from "../middlewares/authenticationToken";
 import {followService} from "../services/followService";
+import {accountService} from "../services/accountService";
 
 
 const router = express.Router();
@@ -40,18 +41,32 @@ router.post("/", authenticateToken, async (req:AuthenticatedRequest, res)=>{
 });
 
 
-router.put("/unfollow", authenticateToken, async (req:AuthenticatedRequest, res)=>{
-   try{
-        const {user} = req;
-        const followedId = req.query.followedId;
+router.put("/accept/:followId", authenticateToken, async (req:AuthenticatedRequest, res)=>{
+    try{
+        logger.debug("Accept follow in the API layer.");
+        const followId = req.params.followId;
+        const accepted = await followService.acceptFollow(followId);
+        ok(res, accepted);
+    }
+    catch (e){
+        badRequest(res, e)
+    }
 
-        const follow = await followService.unfollow(followedId, user);
-        ok(res, follow);
+});
+
+
+router.delete("/reject/:followId", authenticateToken, async (req:AuthenticatedRequest, res)=>{
+   try{
+       logger.debug("Reject follow in the API layer.");
+       const followId = req.params.followId;
+       const removedId = await followService.removeFollower(followId);
+       ok(res, removedId);
    }
    catch (e){
        badRequest(res, e)
    }
 });
+
 
 
 

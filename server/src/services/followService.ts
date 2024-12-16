@@ -1,6 +1,7 @@
 
 import Follow from "../models/follow";
 import {JwtPayload} from "../middlewares/authenticationToken";
+import {logger} from "../logger";
 
 
 export const followService = {
@@ -14,8 +15,10 @@ export const followService = {
 
         const followers = await Follow.find({
             followedId:user.userId,
-            active:true
         }).populate("followerId", "_id username email");
+
+
+
 
         return followers;
 
@@ -23,57 +26,52 @@ export const followService = {
 
     follow:async (followedId:any, user?:JwtPayload)=>{
 
-        if (!followedId || !user)
-            throw new Error("Unauthorized or followedId is null.");
+        logger.debug(`Follow in the BLL layer. followedId=${followedId}, followerId=${user?.userId}`);
+
+        const existFollow = await Follow.findOne({followedId:followedId, followerId:user?.userId});
 
 
-
-        const follow =  await Follow.findOne({
-            followerId:user.userId,
-            followedId:followedId,
-            active:false
-        });
-
-        if (follow){
-            const refollowed = await Follow.findByIdAndUpdate(follow._id, {
-                active:true
-            });
-
-            return refollowed;
+        //Unfollow case
+        if (existFollow){
+            logger.debug(`Unfollow case. _id=${existFollow._id}`);
+            await Follow.findByIdAndDelete(existFollow._id);
+            return;
         }
 
 
-        const newFollow = new Follow(
-            {
-                followerId:user.userId,
-                followedId:followedId,
-            }
-        )
-        const savedFollow = newFollow.save();
-        return savedFollow;
+
+        //Follow case
+        const newFollow = new Follow({followedId:followedId, followerId:user?.userId, status:"pending"});
+        await newFollow.save();
     },
 
 
-    unfollow:async (followedId:any, user?:JwtPayload) =>{
-        if (!followedId || !user)
-            throw new Error("Unauthorized or followedId is null.");
 
-        const follow = await Follow.findOne({
-            followerId:user.userId,
-            followedId:followedId,
-            active:true
-        });
+    acceptFollow:async (followId:any)=>{
+        logger.debug("Accept follow in the BLL layer.");
 
 
-        if (!follow)
+        const pendingFollow = await Follow.findById(followId);
+
+        if (!pendingFollow)
             throw new Error("Follow not found.");
 
 
-        const deletedFollow = Follow.findByIdAndUpdate(follow._id, {
-            active:false
-        });
+        pendingFollow.status = "accepted";
+
+        await pendingFollow.save();
+
+        return pendingFollow;
+    },
+
+    removeFollower:async (followId:any) =>{
+
+        const deletedFollow = await Follow.findByIdAndDelete(followId);
+        if (!deletedFollow)
+            throw new Error("Follow not found.");
 
 
+        return deletedFollow._id;
     }
 
 }

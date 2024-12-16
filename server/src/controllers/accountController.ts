@@ -45,6 +45,20 @@ router.get("/top-accounts", authenticateToken, async (req:AuthenticatedRequest, 
     }
 });
 
+
+router.get("/logged-in-account", authenticateToken,  async (req:AuthenticatedRequest, res)=>{
+    try{
+        const {user} = req;
+        const currentUser = await accountService.getLoggedInUser(user);
+
+        ok(res, currentUser);
+    }
+    catch (e){
+        badRequest(res,e);
+    }
+})
+
+
 router.get("/:id", authenticateToken, async (req,res)=>{
    try{
        const id = req.params.id;
@@ -61,32 +75,22 @@ router.get("/:id", authenticateToken, async (req,res)=>{
 });
 
 
-router.post("/upload-image", authenticateToken, async (req:AuthenticatedRequest, res)=>{
-    try{
-        const data = req.body;
-        const {user} = req;
-        logger.debug("Upload profile image in the API layer. ")
-        const uploaded = await accountService.uploadImage(data, user);
-        return ok(res, uploaded);
-    }
-    catch (e){
-        badRequest(res, e);
-    }
-});
-
-
 router.put("/",authenticateToken, async (req:AuthenticatedRequest, res)=>{
    try{
       const data = req.body;
       const accountId = req.query.accountId;
       logger.debug(`Update account in the API layer. accountId=${accountId}`);
+      const updatedAccount = await accountService.updateAccount(accountId, data);
 
-      //await accountService.updateAccount(accountId, data);
+      ok(res, updatedAccount);
    }
    catch (e){
        badRequest(res,e);
    }
 });
+
+
+
 
 
 

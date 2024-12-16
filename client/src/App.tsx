@@ -10,6 +10,7 @@ import {ProgressSpinner} from "primereact/progressspinner";
 import Account from "./pages/Account/Account.tsx";
 import {QueryClient, QueryClientProvider} from "react-query";
 import 'react-toastify/dist/ReactToastify.css';
+import {ToastContainer} from "react-toastify";
 
 
 const SignIn = lazy(() => import("./pages/SignIn/SignIn.tsx"));
@@ -56,6 +57,7 @@ function App() {
                                 <Route path={"*"} element={<NotFound/>}/>
                                 <Route path={"/forbidden"} element={<Forbidden/>}/>
                             </Routes>
+                            <ToastContainer position={"bottom-right"} autoClose={5000} newestOnTop={true} theme={"dark"}/>
                         </Suspense>
                     </Provider>
                 </QueryClientProvider>

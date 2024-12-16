@@ -14,6 +14,8 @@ export const AccountPosts = ({posts}:AccountPostsProps) =>{
             posts.map((e)=>{
                 return <AccountPostCard key={e._id} postData={e}/>
             })
+
         }
+        <div className={"w-full text-2xl"}>Incoming posts soon</div>
     </div>
 }

@@ -10,7 +10,8 @@ import {AccountFollowers} from "./AccountFollowers.tsx";
 
 const Account = () =>{
 
-    const {account, loading, followAccount} = useAccount();
+    const {account, loading, followAccount, user} = useAccount();
+
 
     if (loading){
         return <AccountSkeleton/>
@@ -19,7 +20,7 @@ const Account = () =>{
     return <>
         <div className={"w-full h-full flex flex-col items-center"}>
             <div className={"flex items-start gap-4 w-full"}>
-                <AccountAvatar username={account?.username || ""} size={"xlarge"} color={""}/>
+                <AccountAvatar username={account?.username || ""} size={"xlarge"} color={account?.profileColor}/>
                 <div>
                     <div className="text-2xl font-semibold">{account?.username}</div>
                     <div>{account?.email}</div>
@@ -27,7 +28,7 @@ const Account = () =>{
                     <div className={"flex items-center gap-2 mt-5"}>
                         <AccountFollowers followers={account?.followers || []}/>
                         <Badge value={`${account?.posts.length} shared posts`} severity={"success"}/>
-                        <Button icon={"pi pi-user-plus"}  size={"small"} text label={"Follow"} rounded onClick={followAccount}/>
+                        <Button icon={"pi pi-user-plus"}  size={"small"} text label={"Follow"} rounded onClick={followAccount} visible={account?._id !== user?.id}/>
                     </div>
                 </div>
 

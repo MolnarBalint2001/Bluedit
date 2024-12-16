@@ -8,10 +8,11 @@ import validator from 'validator';
 import {getApi} from "../../config/api.ts";
 import {useFormik} from "formik";
 import {Toast} from "primereact/toast";
-import {useAppDispatch} from "../../store/hooks.ts";
+import {useAppDispatch, useAppSelector} from "../../store/hooks.ts";
 import {setUser} from "../../store/auth/auth.slice.ts";
 import {useCookies} from "react-cookie";
 import {PasswordInput} from "../../components/PasswordInput/PasswordInput.tsx";
+import {toast} from "react-toastify";
 
 const SignIn = () => {
 
@@ -25,6 +26,8 @@ const SignIn = () => {
     const toastRef = useRef<Toast>(null);
 
     const dispatch = useAppDispatch();
+
+    const user = useAppSelector(state=>state.auth.user);
 
 
 
@@ -57,8 +60,10 @@ const SignIn = () => {
             try{
                 const response = await getApi().post("/auth/signin", JSON.stringify(data));
                 if (response.status === 200){
+                    toast.success("Authenticated successfully.")
                     const data = response.data;
                     dispatch(setUser(data));
+                    setTimeout(()=>toast.success("Redictering..."), 100)
                     setTimeout(()=>{
                         navigate(routes.posts);
                     }, 500);
